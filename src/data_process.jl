@@ -18,10 +18,10 @@ mutate_index(f, x::TimeSeries) = TimeSeries(f(x.index), x.data)
 map_data(f, x::TimeSeries) = mutate_data(x->map(f, x), x)
 map_index(f, x::TimeSeries) = mutate_index(x->map(f, x), x)
 
-function normalize_timing(x::TimeSeries, y...)
-  mutate_data(x->normalize_timing(x, y...), x)
+function normalize_start(x::TimeSeries, y...)
+  mutate_data(x->normalize_start(x, y...), x)
 end
-normalize_timing(index, start = index[1]) = map(x -> x - start, index)
+normalize_start(index, start = index[1]) = map(x -> x - start, index)
 
 to_sec(x::PyObject) = x[:to_sec]()
 to_sec(x::AbstractArray) = map(to_sec, x)
