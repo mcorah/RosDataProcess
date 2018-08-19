@@ -19,8 +19,7 @@ bag = dec_bags[1]
 
 topic_names = get_topic_names(bag)
 
-entropy = read_topic("/kinematic_exploration/entropy_reduction", bag)
-entropy = mutate_index(x->to_sec(normalize_timing(x)), entropy)
-entropy = map_data(x->x[:data], entropy)
+entropy = read_topic("/kinematic_exploration/entropy_reduction", bag;
+                     accessor = x->x[:data])
 
 plot(get_index(entropy), get_data(entropy))

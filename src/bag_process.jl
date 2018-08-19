@@ -76,11 +76,13 @@ function get_topic_names(bag)
   keys(bag.bag[:get_type_and_topic_info]()[2])
 end
 
-function read_topic(topic, bag::AnnotatedBag)
+function read_topic(topic, bag::AnnotatedBag; accessor = x->x)
   topic_message_time = collect(bag.bag[:read_messages](topics=[topic]))
 
-  times = map(x->x[3], topic_message_time)
-  data = map(x->x[2], topic_message_time)
+  # access elements of the tuple
+  ros_times = map(x->x[3], topic_message_time)
+  data = map(x -> accessor(x[2]), topic_message_time)
 
+  times = to_sec(normalize_timing(ros_times))
   TimeSeries(times, data)
 end
