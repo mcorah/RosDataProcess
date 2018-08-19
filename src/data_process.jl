@@ -2,6 +2,10 @@
 # time series data
 ##################
 
+# There is an accepted time series package called TimeSeries.jl.
+# However, that doesn't handle real/float-valued times well.
+# Otherwise, I might consider using the DataFrames package.
+
 immutable TimeSeries
   index::AbstractArray
   data::AbstractArray
@@ -63,7 +67,6 @@ function interpolate(sample_times, ts, data)
     for ii = 1:size(ret)
       (ret[ii], lower_bound) = interpolate_at_time(sample_times[ii], ts, data,
                                                    lower_bound)
-
     end
 
     return ret
