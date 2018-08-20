@@ -8,13 +8,15 @@ using Iterators
 # However, that doesn't handle real/float-valued times well.
 # Otherwise, I might consider using the DataFrames package.
 
-immutable TimeSeries
-  index::AbstractArray
-  data::AbstractArray
+immutable TimeSeries{I, D, N}
+  index::AbstractArray{I, 1}
+  data::AbstractArray{D, N}
   TimeSeries(index, data) = new(index, data)
 end
 
-TimeSeries(data) = new(collect(1:size(data,1)), data)
+TimeSeries{I,D,N}(index::AbstractArray{I, 1}, data::AbstractArray{D,N}) =
+  TimeSeries{I, D, N}(index, data)
+TimeSeries(data) = TimeSeries(collect(1:size(data,1)), data)
 
 get_index(x::TimeSeries) = x.index
 get_data(x::TimeSeries) = x.data
@@ -43,7 +45,7 @@ indices_match(a::TimeSeries, b::TimeSeries) = indices_match(get_index(a),
 
 # Processing
 
-function intersect_intervals(series::AbstractArray{TimeSeries}, num_samples = 100)
+function intersect_intervals(series, num_samples = 100)
   lower = maximum(get_index(x)[1] for x in series if length(get_index(x)) > 0)
   upper = minimum(get_index(x)[end] for x in series if length(get_index(x)) > 0)
 
@@ -100,7 +102,7 @@ function interpolate(sample_times, x::TimeSeries)
   TimeSeries(sample_times, data)
 end
 
-function intersect_interpolate(series::AbstractArray{TimeSeries}, x...)
+function intersect_interpolate(series, x...)
   interval = intersect_intervals(series, x...)
 
   map(series) do x
