@@ -23,7 +23,7 @@ map_data(f, x::TimeSeries) = mutate_data(x->map(f, x), x)
 map_index(f, x::TimeSeries) = mutate_index(x->map(f, x), x)
 
 function normalize_start(x::TimeSeries, y...)
-  mutate_data(x->normalize_start(x, y...), x)
+  mutate_index(x->normalize_start(x, y...), x)
 end
 normalize_start(index, start = index[1]) = map(x -> x - start, index)
 
@@ -61,10 +61,10 @@ end
 # sample_times should be sorted
 function interpolate(sample_times, ts, data)
   if issorted(sample_times)
-    ret = zeros(data)
+    ret = zeros(sample_times)
     lower_bound = 0
 
-    for ii = 1:size(ret)
+    for ii = eachindex(ret)
       (ret[ii], lower_bound) = interpolate_at_time(sample_times[ii], ts, data,
                                                    lower_bound)
     end

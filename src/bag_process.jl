@@ -60,7 +60,7 @@ function filter_bags(dict, bags::Array{AnnotatedBag})
 end
 
 function get_range(field, bags)
-  sort(collect(Set(map(get_param, bags))))
+  sort(collect(Set(map(x->get_param(field, x), bags))))
 end
 
 function sort_bags(bags, spec)
@@ -83,6 +83,6 @@ function read_topic(topic, bag::AnnotatedBag; accessor = x->x)
   ros_times = map(x->x[3], topic_message_time)
   data = map(x -> accessor(x[2]), topic_message_time)
 
-  times = to_sec(normalize_timing(ros_times))
+  times = to_sec(normalize_start(ros_times))
   TimeSeries(times, data)
 end
