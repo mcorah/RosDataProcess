@@ -2,6 +2,8 @@
 # time series data
 ##################
 
+using Iterators
+
 # There is an accepted time series package called TimeSeries.jl.
 # However, that doesn't handle real/float-valued times well.
 # Otherwise, I might consider using the DataFrames package.
@@ -30,6 +32,23 @@ normalize_start(index, start = index[1]) = map(x -> x - start, index)
 to_sec(x::PyObject) = x[:to_sec]()
 to_sec(x::AbstractArray) = map(to_sec, x)
 to_sec(x::TimeSeries) = map_index(to_sec, x)
+
+# Operators
+
+# Do progressively more broad equality checks for comparisons of indices. It is
+# possible that the first two can be combined.
+indices_match(a, b) = a === b || a == b || all(a .== b)
+indices_match(a::TimeSeries, b::TimeSeries) = indices_match(get_index(a),
+                                                            get_index(b))
+
+# Processing
+
+function intersect_intervals(series::AbstractArray{TimeSeries}, num_samples = 100)
+  lower = maximum(get_index(x)[1] for x in series if length(get_index(x)) > 0)
+  upper = minimum(get_index(x)[end] for x in series if length(get_index(x)) > 0)
+
+  linspace(lower, upper, num_samples)
+end
 
 # ts: sorted timestamps for data
 # return tuple of value and index for lower bound on time
@@ -72,5 +91,19 @@ function interpolate(sample_times, ts, data)
     return ret
   else
     throw(ArgumentError("sample times should be sorted"))
+  end
+end
+
+function interpolate(sample_times, x::TimeSeries)
+  data = interpolate(sample_times, get_index(x), get_data(x))
+
+  TimeSeries(sample_times, data)
+end
+
+function intersect_interpolate(series::AbstractArray{TimeSeries}, x...)
+  interval = intersect_intervals(series, x...)
+
+  map(series) do x
+    interpolate(interval, x)
   end
 end
