@@ -13,7 +13,7 @@ bags = load_directory(bag_directory)
 fixed = Dict("kinematic_exploration/decentralized_enabled" => true)
 dec_bags = filter_bags(fixed, bags)
 
-spec = ["num_robots", "num_decentralized"]
+spec = ["num_robots", "kinematic_exploration/num_decentralized_planning_rounds"]
 
 bag = dec_bags[1]
 
