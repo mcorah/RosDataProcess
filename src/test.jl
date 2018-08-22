@@ -1,3 +1,4 @@
+include("time_series.jl")
 include("bag_process.jl")
 include("data_process.jl")
 
