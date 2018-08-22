@@ -8,7 +8,7 @@ using Iterators
 # However, that doesn't handle real/float-valued times well.
 # Otherwise, I might consider using the DataFrames package.
 
-immutable TimeSeries{I, D, N}
+type TimeSeries{I, D, N} <: AbstractArray{D, N}
   index::AbstractArray{I, 1}
   data::AbstractArray{D, N}
 
