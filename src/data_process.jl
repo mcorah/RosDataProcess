@@ -11,7 +11,15 @@ using Iterators
 immutable TimeSeries{I, D, N}
   index::AbstractArray{I, 1}
   data::AbstractArray{D, N}
-  TimeSeries(index, data) = new(index, data)
+
+  function TimeSeries(index, data)
+
+    if size(index, 1) != size(data, 1)
+      error("first dimension of index and data do not match")
+    end
+
+    new(index, data)
+  end
 end
 
 TimeSeries{I,D,N}(index::AbstractArray{I, 1}, data::AbstractArray{D,N}) =
