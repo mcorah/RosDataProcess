@@ -17,12 +17,15 @@
 # be quite applicable due to inflexibility in representation of time and
 # inflexibility with data dimension respectively
 
-type TimeSeries{I, D, N} <: AbstractArray{D, N}
-  time::AbstractArray{I, 1}
-  data::AbstractArray{D, N}
+# I would like to be able to swap out the array type for "data," but I don't
+# know how to do so while also inferring the parameters of the AbstractArray
+# that I inherit from
+type TimeSeries{D, N, AT <: AbstractVector} <: AbstractArray{D,N}
+
+  time::AT
+  data::Array{D,N}
 
   function TimeSeries(time, data)
-
     if size(time, 1) != size(data, 1)
       error("first dimension of time and data do not match")
     end
@@ -31,13 +34,32 @@ type TimeSeries{I, D, N} <: AbstractArray{D, N}
   end
 end
 
-TimeSeries{I,D,N}(time::AbstractArray{I, 1}, data::AbstractArray{D,N}) =
-  TimeSeries{I, D, N}(time, data)
+TimeSeries{D,N,AT}(time::AT, data::Array{D,N}) = TimeSeries{D,N,AT}(time, data)
 TimeSeries(data) = TimeSeries(collect(1:size(data,1)), data)
+
+#######################################
+# Internal type queries for convenience
+#######################################
+time_type{D,N,AT}(::Type{TimeSeries{D,N,AT}}) = AT
+data_type{D,N,AT}(::Type{TimeSeries{D,N,AT}}) = Array{D,N}
+
+time_eltype{D,N,AT}(::Type{TimeSeries{D,N,AT}}) = eltype(AT)
 
 ######################
 # TimeSeries interface
 ######################
+
+# Note: "_data" methods can be deprecated given the array interface although
+# some may still be usefull or necessary for odd jobs.
+
+# A good example of when get_data would be useful is when it makes sense to
+# discard the time array for the underlying data array. This can happen when the
+# "data" encodes a range or an abstract notion of time such as an iteration
+# number. While "iterations" may have been published in real time and been used
+# to construct a time array, they may also be used as the time component of new
+# TimeSeries objects. In such cases, it generally makes sense to use an
+# appropriate Array for the time data rather than defining the TimeSeries in
+# terms of another TimeSeries.
 
 get_time(x::TimeSeries) = x.time
 get_data(x::TimeSeries) = x.data
@@ -59,11 +81,13 @@ indices_match(a::TimeSeries, b::TimeSeries) = indices_match(get_time(a),
 # See documentation at:
 # https://docs.julialang.org/en/latest/manual/interfaces/#man-interface-array-1
 
-import Base.size, Base.getindex, Base.setindex!, Base.similar
+import Base.size, Base.linearindexing, Base.getindex, Base.setindex!,
+Base.similar
 
 # This deviates somewhat from the documentation but also fits the actual
 # definitions in the code so these seem to be the right way to define everything
 size(x::TimeSeries) = size(get_data(x))
+linearindexing{T <: TimeSeries}(::Type{T}) = linearindexing(data_type(T))
 getindex(x::TimeSeries, I...) = getindex(get_data(x), I...)
 setindex!(x::TimeSeries, v, I...) = setindex!(get_data(x), v, I...)
 
