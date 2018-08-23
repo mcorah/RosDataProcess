@@ -66,6 +66,14 @@ end
 function sort_bags(bags, spec)
 end
 
+#################
+# Time conversion
+#################
+
+to_sec(x::PyObject) = x[:to_sec]()
+to_sec(x::AbstractArray) = map(to_sec, x)
+to_sec(x::TimeSeries) = map_time(to_sec, x)
+
 ############################
 # Topics and data extraction
 ############################

@@ -9,10 +9,6 @@ function normalize_start(x::TimeSeries, y...)
 end
 normalize_start(index, start = index[1]) = map(x -> x - start, index)
 
-to_sec(x::PyObject) = x[:to_sec]()
-to_sec(x::AbstractArray) = map(to_sec, x)
-to_sec(x::TimeSeries) = map_index(to_sec, x)
-
 # Processing
 
 function intersect_intervals(series, num_samples = 100)
