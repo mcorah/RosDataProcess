@@ -21,4 +21,4 @@ topic_names = get_topic_names(bag)
 entropy = read_topic("/kinematic_exploration/entropy_reduction", bag;
                      accessor = x->x[:data])
 
-plot(get_index(entropy), get_data(entropy))
+plot(get_time(entropy), get_data(entropy))

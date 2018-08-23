@@ -5,21 +5,21 @@ using Iterators
 # Otherwise, I might consider using the DataFrames package.
 
 function normalize_start(x::TimeSeries, y...)
-  mutate_index(x->normalize_start(x, y...), x)
+  mutate_time(x->normalize_start(x, y...), x)
 end
-normalize_start(index, start = index[1]) = map(x -> x - start, index)
+normalize_start(time, start = time[1]) = map(x -> x - start, time)
 
 # Processing
 
 function intersect_intervals(series, num_samples = 100)
-  lower = maximum(get_index(x)[1] for x in series if length(get_index(x)) > 0)
-  upper = minimum(get_index(x)[end] for x in series if length(get_index(x)) > 0)
+  lower = maximum(get_time(x)[1] for x in series if length(get_time(x)) > 0)
+  upper = minimum(get_time(x)[end] for x in series if length(get_time(x)) > 0)
 
   linspace(lower, upper, num_samples)
 end
 
 # ts: sorted timestamps for data
-# return tuple of value and index for lower bound on time
+# return tuple of value and time for lower bound on time
 function interpolate_at_time(sample_time, ts, data, lower_bound = 0)
   if sample_time <= ts[1]
     return (data[1], 0)
@@ -63,7 +63,7 @@ function interpolate(sample_times, ts, data)
 end
 
 function interpolate(sample_times, x::TimeSeries)
-  data = interpolate(sample_times, get_index(x), get_data(x))
+  data = interpolate(sample_times, get_time(x), get_data(x))
 
   TimeSeries(sample_times, data)
 end

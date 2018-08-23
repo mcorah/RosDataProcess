@@ -18,40 +18,40 @@
 # inflexibility with data dimension respectively
 
 type TimeSeries{I, D, N} <: AbstractArray{D, N}
-  index::AbstractArray{I, 1}
+  time::AbstractArray{I, 1}
   data::AbstractArray{D, N}
 
-  function TimeSeries(index, data)
+  function TimeSeries(time, data)
 
-    if size(index, 1) != size(data, 1)
-      error("first dimension of index and data do not match")
+    if size(time, 1) != size(data, 1)
+      error("first dimension of time and data do not match")
     end
 
-    new(index, data)
+    new(time, data)
   end
 end
 
-TimeSeries{I,D,N}(index::AbstractArray{I, 1}, data::AbstractArray{D,N}) =
-  TimeSeries{I, D, N}(index, data)
+TimeSeries{I,D,N}(time::AbstractArray{I, 1}, data::AbstractArray{D,N}) =
+  TimeSeries{I, D, N}(time, data)
 TimeSeries(data) = TimeSeries(collect(1:size(data,1)), data)
 
 ######################
 # TimeSeries interface
 ######################
 
-get_index(x::TimeSeries) = x.index
+get_time(x::TimeSeries) = x.time
 get_data(x::TimeSeries) = x.data
 
-mutate_data(f, x::TimeSeries) = TimeSeries(x.index, f(x.data))
-mutate_index(f, x::TimeSeries) = TimeSeries(f(x.index), x.data)
+mutate_time(f, x::TimeSeries) = TimeSeries(f(x.time), x.data)
+mutate_data(f, x::TimeSeries) = TimeSeries(x.time, f(x.data))
+map_time(f, x::TimeSeries) = mutate_time(x->map(f, x), x)
 map_data(f, x::TimeSeries) = mutate_data(x->map(f, x), x)
-map_index(f, x::TimeSeries) = mutate_index(x->map(f, x), x)
 
 # Do progressively more broad equality checks for comparisons of indices. It is
 # possible that the first two can be combined.
 indices_match(a, b) = a === b || a == b || all(a .== b)
-indices_match(a::TimeSeries, b::TimeSeries) = indices_match(get_index(a),
-                                                            get_index(b))
+indices_match(a::TimeSeries, b::TimeSeries) = indices_match(get_time(a),
+                                                            get_time(b))
 #################
 # Array interface
 #################
