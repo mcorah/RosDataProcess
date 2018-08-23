@@ -37,6 +37,9 @@ function TimeSeries{D,N,AT}(time::AT, data::AbstractArray{D,N})
 end
 TimeSeries(data) = TimeSeries(Base.OneTo(size(data,1)), data)
 
+# Copy constructor
+TimeSeries(x::TimeSeries) = TimeSeries(get_time(x), get_data(x))
+
 #######################################
 # Internal type queries for convenience
 #######################################
