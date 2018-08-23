@@ -5,8 +5,7 @@ mutate_time, mutate_data, map_time, map_data, indices_match
 
 include("time_series.jl")
 
-export normalize_start, intersect_intervals, interpolate_at_time, interpolate,
-intersect_interpolate
+export normalize_start, intersect_intervals, interpolate, intersect_interpolate
 
 include("data_process.jl")
 

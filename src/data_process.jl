@@ -20,7 +20,7 @@ end
 
 # ts: sorted timestamps for data
 # return tuple of value and time for lower bound on time
-function interpolate_at_time(sample_time, ts, data, lower_bound = 0)
+function interpolate(sample_time::Real, ts, data, lower_bound = 0)
   if sample_time <= ts[1]
     return (data[1], 0)
   elseif sample_time >= ts[end]
@@ -46,13 +46,13 @@ function interpolate_at_time(sample_time, ts, data, lower_bound = 0)
 end
 
 # sample_times should be sorted
-function interpolate(sample_times, ts, data)
+function interpolate{T<:Real}(sample_times::AbstractArray{T,1}, ts, data)
   if issorted(sample_times)
     ret = zeros(sample_times)
     lower_bound = 0
 
     for ii = eachindex(ret)
-      (ret[ii], lower_bound) = interpolate_at_time(sample_times[ii], ts, data,
+      (ret[ii], lower_bound) = interpolate(sample_times[ii], ts, data,
                                                    lower_bound)
     end
 
