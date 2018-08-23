@@ -1,7 +1,5 @@
 using PyPlot
-include("time_series.jl")
-include("bag_process.jl")
-include("data_process.jl")
+using RosDataProcess
 
 bag_directory = "$(homedir())/bagfiles/decentralized_exploration_timing_journal/"
 #file_names = readdir(bag_directory)

@@ -1,6 +1,4 @@
-include("time_series.jl")
-include("bag_process.jl")
-include("data_process.jl")
+using RosDataProcess
 
 # Test simple time series
 a = TimeSeries(1:30, sin(1:30))
