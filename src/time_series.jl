@@ -91,7 +91,8 @@ Base.similar
 # definitions in the code so these seem to be the right way to define everything
 size(x::TimeSeries) = size(get_data(x))
 linearindexing{T <: TimeSeries}(::Type{T}) = linearindexing(data_type(T))
-getindex(x::TimeSeries, I...) = getindex(get_data(x), I...)
+getindex(x::TimeSeries, i::Int) = getindex(get_data(x), i)
+getindex{D,N}(x::TimeSeries{D,N}, I::Vararg{Int,N}) = getindex(get_data(x),I...)
 setindex!(x::TimeSeries, v, I...) = setindex!(get_data(x), v, I...)
 
 # "similar" will produce a new TimeSeries rather than an Array so that we can
