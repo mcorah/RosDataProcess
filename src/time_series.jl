@@ -35,7 +35,7 @@ end
 function TimeSeries{D,N,AT}(time::AT, data::AbstractArray{D,N})
   TimeSeries{D,N,AT,typeof(data)}(time, data)
 end
-TimeSeries(data) = TimeSeries(collect(1:size(data,1)), data)
+TimeSeries(data) = TimeSeries(Base.OneTo(size(data,1)), data)
 
 #######################################
 # Internal type queries for convenience
