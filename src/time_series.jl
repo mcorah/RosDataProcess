@@ -17,15 +17,13 @@
 # be quite applicable due to inflexibility in representation of time and
 # inflexibility with data dimension respectively
 
-# I would like to be able to swap out the array type for "data," but I don't
-# know how to do so while also inferring the parameters of the AbstractArray
-# that I inherit from
-type TimeSeries{D, N, AT <: AbstractVector} <: AbstractArray{D,N}
+type TimeSeries{D, N, AT <: AbstractVector, AD <: AbstractArray} <: AbstractArray{D,N}
 
   time::AT
-  data::Array{D,N}
+  data::AD
 
-  function TimeSeries(time, data)
+  # Here we enforce the constraint that AT <: AbstractArray{D,N}
+  function TimeSeries(time, data::AbstractArray{D,N})
     if size(time, 1) != size(data, 1)
       error("first dimension of time and data do not match")
     end
@@ -34,16 +32,21 @@ type TimeSeries{D, N, AT <: AbstractVector} <: AbstractArray{D,N}
   end
 end
 
-TimeSeries{D,N,AT}(time::AT, data::Array{D,N}) = TimeSeries{D,N,AT}(time, data)
+function TimeSeries{D,N,AT}(time::AT, data::AbstractArray{D,N})
+  TimeSeries{D,N,AT,typeof(data)}(time, data)
+end
 TimeSeries(data) = TimeSeries(collect(1:size(data,1)), data)
 
 #######################################
 # Internal type queries for convenience
 #######################################
-time_type{D,N,AT}(::Type{TimeSeries{D,N,AT}}) = AT
-data_type{D,N,AT}(::Type{TimeSeries{D,N,AT}}) = Array{D,N}
+time_type{D,N,AT,AD}(::Type{TimeSeries{D,N,AT,AD}}) = AT
+time_type{T <: TimeSeries}(::T) = time_type(T)
+data_type{D,N,AT,AD}(::Type{TimeSeries{D,N,AT,AD}}) = AD
+data_type{T <: TimeSeries}(::T) = data_type(T)
 
-time_eltype{D,N,AT}(::Type{TimeSeries{D,N,AT}}) = eltype(AT)
+time_eltype{D,N,AT,AD}(::Type{TimeSeries{D,N,AT,AD}}) = eltype(AT)
+time_eltype{T <: TimeSeries}(::T) = time_eltype(T)
 
 ######################
 # TimeSeries interface
