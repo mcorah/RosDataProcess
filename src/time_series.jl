@@ -56,3 +56,24 @@ indices_match(a::TimeSeries, b::TimeSeries) = indices_match(get_time(a),
 # Array interface
 #################
 
+# See documentation at:
+# https://docs.julialang.org/en/latest/manual/interfaces/#man-interface-array-1
+
+import Base.size, Base.getindex, Base.setindex!, Base.similar
+
+# This deviates somewhat from the documentation but also fits the actual
+# definitions in the code so these seem to be the right way to define everything
+size(x::TimeSeries) = size(get_data(x))
+getindex(x::TimeSeries, I...) = getindex(get_data(x), I...)
+setindex!(x::TimeSeries, v, I...) = setindex!(get_data(x), v, I...)
+
+# "similar" will produce a new TimeSeries rather than an Array so that we can
+# keep the time data around. The data is in turn defined recursively according
+# to its type with another call to similar.
+function similar{S, N}(x::TimeSeries, ::Type{S}, dims::Dims{N})
+  if size(x, 1) != dims[1]
+    error("similar not defined for varying first dimension of a TimeSeries")
+  end
+
+  TimeSeries(get_time(x), similar(get_data(x), S, dims))
+end
