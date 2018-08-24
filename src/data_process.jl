@@ -7,7 +7,7 @@ function normalize_start(x::TimeSeries, y...)
 end
 normalize_start(time, start = time[1]) = map(x -> x - start, time)
 
-function intersect_intervals(series, num_samples = 100)
+function intersect_intervals(series; num_samples = 100)
   lower = maximum(get_time(x)[1] for x in series if length(get_time(x)) > 0)
   upper = minimum(get_time(x)[end] for x in series if length(get_time(x)) > 0)
 
@@ -65,9 +65,9 @@ function interpolate(sample_times, x::TimeSeries)
 end
 
 
-function intersect_interpolate{T <: TimeSeries}(series::AbstractArray{T}, x...)
+function intersect_interpolate{T <: TimeSeries}(series::AbstractArray{T}; x...)
   # compute the interval
-  interval = intersect_intervals(series, x...)
+  interval = intersect_intervals(series; x...)
 
   cat_dim = ndims(series[1]) + 1
 
