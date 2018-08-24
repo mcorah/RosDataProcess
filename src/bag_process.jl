@@ -84,6 +84,9 @@ function get_topic_names(bag)
   keys(bag.bag[:get_type_and_topic_info]()[2])
 end
 
+# Read messages from a given topic and bag into a time series according to
+# time-stamps in the bag
+# TODO: Use header stamps?
 function read_topic(topic, bag::AnnotatedBag; accessor = x->x)
   topic_message_time = collect(bag.bag[:read_messages](topics=[topic]))
 
@@ -97,6 +100,8 @@ function read_topic(topic, bag::AnnotatedBag; accessor = x->x)
   TimeSeries(times, data)
 end
 
+# Read messages (see read_topic, above) from multiple bags and possibly
+# interpolate into a multi-dimensional time series
 function read_topic(topic, bags::AbstractArray{AnnotatedBag}; interpolate=false,
                     kws...)
   trials = map(bags) do bag
@@ -106,6 +111,34 @@ function read_topic(topic, bags::AbstractArray{AnnotatedBag}; interpolate=false,
   if interpolate
     interpolate_args = Dict(x for x in kws if x[1] == :num_samples)
     intersect_interpolate(trials; interpolate_args...)
+  else
+    trials
+  end
+end
+
+# Read an abstract time series with published data and time from a single bag
+function read_series(time_topic, data_topic, bag::AnnotatedBag;
+                    access_time=x->x, access_data=x->x)
+  # tuple is (topic, data, time)
+  time_tuples = collect(bag.bag[:read_messages](topics=[time_topic]))
+  data_tuples = collect(bag.bag[:read_messages](topics=[data_topic]))
+
+  time = [access_time(x[2]) for x in time_tuples]
+  data = [access_data(x[2]) for x in data_tuples]
+
+  TimeSeries(time, data)
+end
+
+# Read an abstract time series (see read_series, above) from multiple bags and
+# possibly intersect into a single multi-dimensional time series
+function read_series(time_topic, data_topic, bags::AbstractArray{AnnotatedBag};
+                     intersect=false, kws...)
+  trials = map(bags) do bag
+    read_series(time_topic, data_topic, bag; kws...)
+  end
+
+  if intersect
+    intersect_series(trials)
   else
     trials
   end

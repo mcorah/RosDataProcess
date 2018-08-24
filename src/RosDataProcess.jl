@@ -17,7 +17,7 @@ include("plotting.jl")
 
 export AnnotatedBag, load_yaml, load_bag, get_name, filter_extension,
 load_directory, get_param, filter_bags, get_range, sort_bags, to_sec,
-get_topic_names, read_topic
+get_topic_names, read_topic, read_series
 
 include("bag_process.jl")
 
