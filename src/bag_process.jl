@@ -87,9 +87,11 @@ end
 function read_topic(topic, bag::AnnotatedBag; accessor = x->x)
   topic_message_time = collect(bag.bag[:read_messages](topics=[topic]))
 
-  # access elements of the tuple
-  ros_times = map(x->x[3], topic_message_time)
-  data = map(x -> accessor(x[2]), topic_message_time)
+  # Access elements of the tuple
+  # Use list comprehensions to infer data types as "map" will pass along the
+  # "Any" element type.
+  ros_times = [x[3] for x in topic_message_time]
+  data = [accessor(x[2]) for x in topic_message_time]
 
   times = to_sec(normalize_start(ros_times))
   TimeSeries(times, data)
