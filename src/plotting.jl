@@ -1,5 +1,6 @@
 using PyPlot
 import PyPlot.plot
+using Colors
 
 ################
 # Plotting tools
@@ -55,3 +56,15 @@ function plot_trials(x::TimeSeries; mean=false, standard_error=false,
 
   ret
 end
+
+###############
+# Color schemes
+###############
+
+standard_colors = [RGB(0,0,1), RGB(1,0,0), RGB(0,1,0)]
+
+rgb_tuple(color::RGB) = (red(color), green(color), blue(color))
+
+generate_colors(x::AbstractArray) = generate_colors(length(x))
+generate_colors(x::Integer) =
+  map(rgb_tuple, distinguishable_colors(x, standard_colors))

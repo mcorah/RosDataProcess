@@ -1,6 +1,8 @@
 using PyPlot
 using RosDataProcess
 
+colors = generate_colors(10)
+
 println("Loading bag directory")
 bag_directory = "$(homedir())/bagfiles/decentralized_exploration_journal/"
 #file_names = readdir(bag_directory)
@@ -23,5 +25,5 @@ entropy = read_topic("/kinematic_exploration/entropy_reduction", dec_bags;
 
 println("Plotting data")
 plots = plot_trials(entropy, mean=true, standard_error=true, trials=false,
-                    color="k")
+                    color=colors[1])
 legend(plots[:mean], ["\$n_r=16\$"])
