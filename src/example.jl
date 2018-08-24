@@ -22,4 +22,6 @@ entropy = read_topic("/kinematic_exploration/entropy_reduction", dec_bags;
                      accessor = x->x[:data], interpolate = true)
 
 println("Plotting data")
-plot_trials(entropy, mean=true, standard_error=true, trials=false, color="k")
+plots = plot_trials(entropy, mean=true, standard_error=true, trials=false,
+                    color="k")
+legend(plots[:mean], ["\$n_r=16\$"])

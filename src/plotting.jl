@@ -1,6 +1,10 @@
 using PyPlot
 import PyPlot.plot
 
+################
+# Plotting tools
+################
+
 # plot one or more time series
 function plot(x::TimeSeries; kws...)
   time = get_time(x)
@@ -35,15 +39,19 @@ end
 # Often, it is to have a single compact plot method for a set of trials
 function plot_trials(x::TimeSeries; mean=false, standard_error=false,
                      trials=false, kws...)
+  ret = Dict{Symbol, Any}()
+
   if trials
-    plot(x; linestyle=":", kws...)
+    ret[:trials] = plot(x; linestyle=":", kws...)
   end
 
   if mean
-    plot_mean(x; kws...)
+    ret[:mean] = plot_mean(x; kws...)
   end
 
   if standard_error
-    plot_standard_error(x; kws...)
+    ret[:standard_error] = plot_standard_error(x; kws...)
   end
+
+  ret
 end
