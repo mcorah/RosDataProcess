@@ -64,10 +64,13 @@ function interpolate(sample_times, x::TimeSeries)
   TimeSeries(sample_times, data)
 end
 
-function intersect_interpolate(series, x...)
+
+function intersect_interpolate{T <: TimeSeries}(series::AbstractArray{T}, x...)
+  # compute the interval
   interval = intersect_intervals(series, x...)
 
-  map(series) do x
-    interpolate(interval, x)
-  end
+  cat_dim = ndims(series[1]) + 1
+
+  # interpolate and concatenate data
+  cat(cat_dim, map(x->interpolate(interval, x), series)...)
 end
