@@ -28,8 +28,6 @@ function plot_standard_error{D}(x::TimeSeries{D,2}; color="k",
 
   xs = vcat(time, reverse(time))
   ys = vcat(means+stdes, reverse(means-stdes))
-  print(size(xs))
-  print(size(ys))
 
   fill(xs, ys; color=color, alpha=alpha, linewidth=linewidth, kws...)
 end
