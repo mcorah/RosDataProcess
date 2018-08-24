@@ -19,6 +19,4 @@ map(println, get_topic_names(bag))
 entropy = read_topic("/kinematic_exploration/entropy_reduction", dec_bags;
                      accessor = x->x[:data], interpolate = true)
 
-plot(entropy, linestyle = ":", color="k")
-plot_mean(entropy, color="k")
-plot_standard_error(entropy)
+plot_trials(entropy, mean=true, standard_error=true, trials=true, color="k")

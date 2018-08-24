@@ -1,21 +1,23 @@
 using PyPlot
 import PyPlot.plot
 
-function plot(x::TimeSeries, args...; kws...)
+# plot one or more time series
+function plot(x::TimeSeries; kws...)
   time = get_time(x)
   data = get_data(x)
 
   n_repeat = vcat(1, collect(size(data))[2:end])
   time_array = repeat(time, outer = n_repeat)
 
-  plot(time_array, data, args...; kws...)
+  plot(time_array, data; kws...)
 end
 
-function plot_mean(x::TimeSeries, args...; kws...)
-  plot(mean(x,2), args...; kws...)
+function plot_mean(x::TimeSeries; kws...)
+  plot(mean(x,2); kws...)
 end
 
-function plot_standard_error{D}(x::TimeSeries{D,2}, args...; color="k",
+# Plot the standard error for a time series as a filled polygon.
+function plot_standard_error{D}(x::TimeSeries{D,2}; color="k",
                                 alpha=0.2, linewidth=0.0, kws...)
   time = get_time(x)
   data = get_data(x)
@@ -29,5 +31,21 @@ function plot_standard_error{D}(x::TimeSeries{D,2}, args...; color="k",
   print(size(xs))
   print(size(ys))
 
-  fill(xs, ys, args...; color=color, alpha=alpha, linewidth=linewidth, kws...)
+  fill(xs, ys; color=color, alpha=alpha, linewidth=linewidth, kws...)
+end
+
+# Often, it is to have a single compact plot method for a set of trials
+function plot_trials(x::TimeSeries; mean=false, standard_error=false,
+                     trials=false, kws...)
+  if trials
+    plot(x; linestyle=":", kws...)
+  end
+
+  if mean
+    plot_mean(x; kws...)
+  end
+
+  if standard_error
+    plot_standard_error(x; kws...)
+  end
 end

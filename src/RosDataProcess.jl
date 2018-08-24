@@ -10,7 +10,7 @@ standard_error
 
 include("data_process.jl")
 
-export plot, plot_standard_error, plot_mean, plot_mean
+export plot, plot_standard_error, plot_mean, plot_mean, plot_trials
 
 include("plotting.jl")
 
