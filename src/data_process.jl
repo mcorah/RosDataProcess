@@ -74,3 +74,14 @@ function intersect_interpolate{T <: TimeSeries}(series::AbstractArray{T}, x...)
   # interpolate and concatenate data
   cat(cat_dim, map(x->interpolate(interval, x), series)...)
 end
+
+##############################
+# More general data processing
+##############################
+
+# Compute standard error in a given dimension.
+# Default dimension is two as samples are typically in the second dimension for
+# TimeSeries.
+function standard_error(x, dim = 2)
+  std(x, dim) ./ sqrt(size(x, dim))
+end
