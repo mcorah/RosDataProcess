@@ -96,3 +96,17 @@ function read_topic(topic, bag::AnnotatedBag; accessor = x->x)
   times = to_sec(normalize_start(ros_times))
   TimeSeries(times, data)
 end
+
+function read_topic(topic, bags::AbstractArray{AnnotatedBag}; interpolate=false,
+                    kws...)
+  trials = map(bags) do bag
+    read_topic(topic, bag; kws...)
+  end
+
+  if interpolate
+    interpolate_args = Dict(x for x in kws if x[1] == :num_samples)
+    intersect_interpolate(trials; interpolate_args...)
+  else
+    trials
+  end
+end
