@@ -1,14 +1,15 @@
 using PyPlot
 using RosDataProcess
 
-bag_directory = "$(homedir())/bagfiles/decentralized_exploration_timing_journal/"
+println("Loading bag directory")
+bag_directory = "$(homedir())/bagfiles/decentralized_exploration_journal/"
 #file_names = readdir(bag_directory)
 bags = load_directory(bag_directory)
 
-fixed = Dict("kinematic_exploration/decentralized_enabled" => false)
+println("Filtering bags")
+fixed = Dict("kinematic_exploration/decentralized_enabled" => false,
+             "num_robots" => 16)
 dec_bags = filter_bags(fixed, bags)
-
-#spec = ["num_robots", "kinematic_exploration/num_decentralized_planning_rounds"]
 
 bag = dec_bags[1]
 
@@ -16,7 +17,9 @@ bag = dec_bags[1]
 println("Topic names:")
 map(println, get_topic_names(bag))
 
+println("Reading bags")
 entropy = read_topic("/kinematic_exploration/entropy_reduction", dec_bags;
                      accessor = x->x[:data], interpolate = true)
 
-plot_trials(entropy, mean=true, standard_error=true, trials=true, color="k")
+println("Plotting data")
+plot_trials(entropy, mean=true, standard_error=true, trials=false, color="k")
