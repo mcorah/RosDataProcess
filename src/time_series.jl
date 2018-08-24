@@ -108,3 +108,12 @@ function similar{S, N}(x::TimeSeries, ::Type{S}, dims::Dims{N})
 
   TimeSeries(get_time(x), similar(get_data(x), S, dims))
 end
+
+##########
+# Printing
+##########
+
+import Base.string, Base.print, Base.show
+string(x::TimeSeries) = string("Time:\n", get_time(x), "\nData:\n", get_data(x))
+print(io::IO, x::TimeSeries) = print(io, string(x))
+show(io::IO, x::TimeSeries) = print(io, string(x))
