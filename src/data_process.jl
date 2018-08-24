@@ -7,6 +7,7 @@ function normalize_start(x::TimeSeries, y...)
 end
 normalize_start(time, start = time[1]) = map(x -> x - start, time)
 
+# intersect general time series
 function intersect_intervals(series; num_samples = 100)
   lower = maximum(get_time(x)[1] for x in series if length(get_time(x)) > 0)
   upper = minimum(get_time(x)[end] for x in series if length(get_time(x)) > 0)
@@ -20,21 +21,25 @@ function intersect_regular{T <: AbstractArray}(series::AbstractArray{T})
   reduce(intersect, series[1], series[2:end])
 end
 
+# Interpolate a deconstructed time series at a single point
 # ts: sorted timestamps for data
 # return tuple of value and time for lower bound on time
-function interpolate(sample_time::Real, ts, data, lower_bound = 0)
+#
+# This is a special internal version that also takes and returns a lower bound
+# for efficient linear indexing
+function interpolate_(sample_time::Real, ts, data, lower_bound = 0)
   if sample_time <= ts[1]
-    return (data[1], 0)
+    return (slicedim(data, 1, 1), 0)
   elseif sample_time >= ts[end]
-    return (data[end], length(ts))
+    return (slicedim(data, 1, length(ts)), length(ts))
   end
 
   for ii = lower_bound+1:length(ts)
     if sample_time < ts[ii]
-      dl = data[ii-1]
+      dl = slicedim(data, 1, ii-1)
       tl = ts[ii-1]
 
-      du = data[ii]
+      du = slicedim(data, 1, ii)
       tu = ts[ii]
 
       value = dl + (du - dl) * (sample_time - tu) / (tu - tl)
@@ -47,21 +52,29 @@ function interpolate(sample_time::Real, ts, data, lower_bound = 0)
   throw(ArgumentError("Interpolate escaped bounds"))
 end
 
+interpolate(sample_time::Real, ts, data) = interpolate_(sample_time, ts,
+                                                        data)[1]
+# Interpolate a deconstructed time series at a series of points
 # sample_times should be sorted
 function interpolate{T<:Real}(sample_times::AbstractArray{T,1}, ts, data)
   assert_sorted(sample_times)
 
-  ret = zeros(sample_times)
+  output_dimension = (length(sample_times), size(data)[2:end]...)
+  ret = similar(data, output_dimension)
   lower_bound = 0
 
-  for ii = eachindex(ret)
-    (ret[ii], lower_bound) = interpolate(sample_times[ii], ts, data, lower_bound)
+  for ii = 1:size(ret, 1)
+    (ret[ii,:], lower_bound) = interpolate_(sample_times[ii], ts, data,
+                                          lower_bound)
   end
 
   ret
 end
 
-function interpolate(sample_times, x::TimeSeries)
+# Interpolate a TimeSeries at one or more points
+interpolate(sample_time::Real, x::TimeSeries) =
+  interpolate(sample_time, get_time(x), get_data(x))
+function interpolate(sample_times::AbstractArray, x::TimeSeries)
   data = interpolate(sample_times, get_time(x), get_data(x))
 
   TimeSeries(sample_times, data)
@@ -97,6 +110,8 @@ function get_at_time{T<:Real}(times::AbstractArray{T,1}, x::TimeSeries)
   TimeSeries(times, ret)
 end
 
+# Intersect intervals (and resample) for a set of time series and return a
+# concatenated time series
 function intersect_interpolate{T <: TimeSeries}(series::AbstractArray{T}; x...)
   # compute the interval
   interval = intersect_intervals(series; x...)
