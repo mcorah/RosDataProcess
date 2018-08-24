@@ -28,6 +28,8 @@ type TimeSeries{D, N, AT <: AbstractVector, AD <: AbstractArray} <: AbstractArra
       error("first dimension of time and data do not match")
     end
 
+    assert_sorted(time)
+
     new(time, data)
   end
 end
@@ -117,3 +119,13 @@ import Base.string, Base.print, Base.show
 string(x::TimeSeries) = string("Time:\n", get_time(x), "\nData:\n", get_data(x))
 print(io::IO, x::TimeSeries) = print(io, string(x))
 show(io::IO, x::TimeSeries) = print(io, string(x))
+
+#######
+# Other
+#######
+
+function assert_sorted(x::AbstractArray, prefix = "")
+  if !issorted(x)
+    error(prefix * "sample times should be sorted")
+  end
+end

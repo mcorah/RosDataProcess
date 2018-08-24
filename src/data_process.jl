@@ -43,19 +43,16 @@ end
 
 # sample_times should be sorted
 function interpolate{T<:Real}(sample_times::AbstractArray{T,1}, ts, data)
-  if issorted(sample_times)
-    ret = zeros(sample_times)
-    lower_bound = 0
+  assert_sorted(sample_times)
 
-    for ii = eachindex(ret)
-      (ret[ii], lower_bound) = interpolate(sample_times[ii], ts, data,
-                                                   lower_bound)
-    end
+  ret = zeros(sample_times)
+  lower_bound = 0
 
-    return ret
-  else
-    throw(ArgumentError("sample times should be sorted"))
+  for ii = eachindex(ret)
+    (ret[ii], lower_bound) = interpolate(sample_times[ii], ts, data, lower_bound)
   end
+
+  ret
 end
 
 function interpolate(sample_times, x::TimeSeries)
