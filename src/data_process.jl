@@ -1,15 +1,11 @@
-using Iterators
-
-# There is an accepted time series package called TimeSeries.jl.
-# However, that doesn't handle real/float-valued times well.
-# Otherwise, I might consider using the DataFrames package.
+#####################
+# Timing and retiming
+#####################
 
 function normalize_start(x::TimeSeries, y...)
   mutate_time(x->normalize_start(x, y...), x)
 end
 normalize_start(time, start = time[1]) = map(x -> x - start, time)
-
-# Processing
 
 function intersect_intervals(series, num_samples = 100)
   lower = maximum(get_time(x)[1] for x in series if length(get_time(x)) > 0)
