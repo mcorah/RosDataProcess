@@ -1,3 +1,10 @@
+# This script parses and plots abstract time series from a ROS bag where
+# messages are associated with an iteration number rather than in real time.
+# Bags are loaded from a given directory and *should be paired with yaml files
+# of the same name.* This script then parses the yaml files to identify ranges
+# of values for given params and succinctly selects and processes sets of
+# repeated trials.
+
 using PyPlot
 using RosDataProcess
 
