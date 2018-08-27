@@ -63,3 +63,5 @@ for num_robots = ranges[:num_robots]
     save_latex("./fig", "entropy_reduction_$(num_robots)")
   end
 end
+
+foreach(close, bags)

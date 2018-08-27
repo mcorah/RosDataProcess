@@ -35,6 +35,9 @@ function load_directory(dir::AbstractString)
   map(x->AnnotatedBag("$(dir)/$(x)"), names)
 end
 
+import Base.close
+close(x::AnnotatedBag) = x.bag[:close]()
+
 ##################
 # Bag manipulation
 ##################
