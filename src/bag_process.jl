@@ -129,11 +129,10 @@ end
 function read_series(time_topic, data_topic, bag::AnnotatedBag;
                     access_time=x->x, access_data=x->x)
   # tuple is (topic, data, time)
-  time_tuples = collect(read_messages(bag, [time_topic]))
-  data_tuples = collect(read_messages(bag, [data_topic]))
+  tuples = collect(read_messages(bag, [time_topic, data_topic]))
 
-  time = [access_time(x[2]) for x in time_tuples]
-  data = [access_data(x[2]) for x in data_tuples]
+  time = [access_time(x[2]) for x in tuples if x[1] == time_topic]
+  data = [access_data(x[2]) for x in tuples if x[1] == data_topic]
 
   TimeSeries(time, data)
 end
