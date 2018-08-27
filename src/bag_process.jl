@@ -84,11 +84,17 @@ function get_topic_names(bag)
   keys(bag.bag[:get_type_and_topic_info]()[2])
 end
 
+# Thin wrapper around the python read_messages function
+function read_messages(bag::AnnotatedBag, topics)
+  bag.bag[:read_messages](topics=topics)
+end
+
+
 # Read messages from a given topic and bag into a time series according to
 # time-stamps in the bag
 # TODO: Use header stamps?
 function read_topic(topic, bag::AnnotatedBag; accessor = x->x)
-  topic_message_time = collect(bag.bag[:read_messages](topics=[topic]))
+  topic_message_time = collect(read_messages(bag, [topic]))
 
   # Access elements of the tuple
   # Use list comprehensions to infer data types as "map" will pass along the
@@ -120,8 +126,8 @@ end
 function read_series(time_topic, data_topic, bag::AnnotatedBag;
                     access_time=x->x, access_data=x->x)
   # tuple is (topic, data, time)
-  time_tuples = collect(bag.bag[:read_messages](topics=[time_topic]))
-  data_tuples = collect(bag.bag[:read_messages](topics=[data_topic]))
+  time_tuples = collect(read_messages(bag, [time_topic]))
+  data_tuples = collect(read_messages(bag, [data_topic]))
 
   time = [access_time(x[2]) for x in time_tuples]
   data = [access_data(x[2]) for x in data_tuples]
