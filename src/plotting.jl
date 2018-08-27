@@ -1,6 +1,8 @@
+using PyCall
 using PyPlot
 import PyPlot.plot
 using Colors
+@pyimport matplotlib2tikz
 
 ################
 # Plotting tools
@@ -68,3 +70,18 @@ rgb_tuple(color::RGB) = (red(color), green(color), blue(color))
 generate_colors(x::AbstractArray) = generate_colors(length(x))
 generate_colors(x::Integer) =
   map(rgb_tuple, distinguishable_colors(x, standard_colors))
+
+#############
+# File output
+#############
+
+# Changes a title to an appropriate file name
+to_file_name(s) = replace(lowercase(s), " ", "_")
+
+function save_latex(fig_path, title)
+  mkpath(fig_path)
+
+  matplotlib2tikz.save("$(fig_path)/$(title).tex",
+                       figureheight="\\figureheight",
+                       figurewidth="\\figurewidth")
+end

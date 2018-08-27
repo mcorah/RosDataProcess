@@ -1,6 +1,8 @@
 using PyPlot
 using RosDataProcess
 
+# Configuration
+save_output = false
 colors = generate_colors(10)
 
 println("Loading bag directory")
@@ -49,4 +51,8 @@ for num_robots = ranges[:num_robots]
   xlabel("Robot-Iteration")
   ylabel("Objective (bits)")
   legend(loc="lower right")
+
+  if save_output
+    save_latex("./fig", "entropy_reduction_$(num_robots)")
+  end
 end
