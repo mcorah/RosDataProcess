@@ -18,7 +18,7 @@ end
 # intersect regular time series (such as produced using published iterations or
 # with a auto-generated linear index)
 function intersect_regular{T <: AbstractArray}(series::AbstractArray{T})
-  reduce(intersect, series[1], series[2:end])
+  sort(reduce(intersect, series[1], series[2:end]))
 end
 
 # Interpolate a deconstructed time series at a single point
