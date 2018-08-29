@@ -16,5 +16,6 @@ The main features that have been implemented so far are:
 
 ## Examples
 
-* `src/test.jl`: Some minimal examples of usage of `TimeSeries`
-* `src/example.jl`: Reproduces several of the plots from the AURO18 paper
+* `example/minimal.jl`: Some minimal examples of usage of `TimeSeries`
+* `example/abstract_time.jl`: Reproduces several of the plots from the AURO18
+  paper for kinematic exploration with separate abstract iterations
