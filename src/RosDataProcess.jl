@@ -1,7 +1,7 @@
 __precompile__()
 module RosDataProcess
 
-using LinearAlgebra, PyCall, PyPlot, Colors, Statistics
+using LinearAlgebra, PyCall, PyPlot, Colors, Statistics, HDF5, JLD
 
 const matplotlib2tikz = PyNULL()
 const yaml = PyNULL()
