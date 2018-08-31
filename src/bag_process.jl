@@ -5,14 +5,34 @@
 struct AnnotatedBag
   yaml
   bag
-  AnnotatedBag(yaml_name, bag_name) =
-    new(load_yaml(yaml_name), load_bag(bag_name))
 end
 
-AnnotatedBag(x) = AnnotatedBag("$(x).yaml", "$(x).bag")
+function AnnotatedBag(x::AbstractString; preprocess=true)
+  yaml_data = load_yaml_data(x, preprocess=preprocess)
+  bag_data = load_bag(x * ".bag")
+
+  AnnotatedBag(yaml_data, bag_data)
+end
 
 function load_yaml(x::AbstractString)
   yaml[:load](open(x))
+end
+
+# Load a yaml file. Optionally, save/load the preprocessed yaml file.
+function load_yaml_data(x::AbstractString; preprocess=true)
+  yaml_file = x * ".yaml"
+  jld2_file = x * ".jld2"
+
+  if !preprocess
+    data = load_yaml(yaml_file)
+  elseif !isfile(jld2_file)
+    data = load_yaml(yaml_file)
+    @save jld2_file data
+  else
+    @load jld2_file data
+  end
+
+  data
 end
 
 function load_bag(x::AbstractString)
