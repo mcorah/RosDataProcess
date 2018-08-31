@@ -14,6 +14,20 @@ The main features that have been implemented so far are:
   associated `yaml` files
 * A few tools for plotting time series
 
+## Setup
+This package relies on the `rosbag` python package which does not seem to be
+available on Conda and is not installed for Python3 on my machine either.
+To deal with this, you will wan to set `PyCall` to use your local installation
+of Python2. This will in turn give Julia access to your installation of `rosbag`
+that came with ROS
+```
+ENV["PYTHON"]="<path to your Python2 installation e.g. /usr/bin/python>"
+Pkg.add("PyCall")
+Pkg.build("PyCall")
+```
+It seems to also be a good idea to add `PYTHON` to your environment so that
+`PyCall` doesn't get built later on with an incorrect version.
+
 ## Examples
 
 * `example/minimal.jl`: Some minimal examples of usage of `TimeSeries`
