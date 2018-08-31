@@ -2,6 +2,16 @@ module RosDataProcess
 
 using LinearAlgebra, PyCall, PyPlot, Colors, Statistics
 
+const matplotlib2tikz = PyNULL()
+const yaml = PyNULL()
+const rosbag = PyNULL()
+
+function __init__()
+  copy!(matplotlib2tikz, pyimport_conda("matplotlib2tikz", "matplotlib2tikz"))
+  copy!(yaml, pyimport_conda("yaml", "pyyaml"))
+  copy!(rosbag, pyimport("rosbag"))
+end
+
 export TimeSeries, time_type, data_type, time_eltype, get_time, get_data,
 mutate_time, mutate_data, map_time, map_data, indices_match
 

@@ -1,5 +1,4 @@
 import PyPlot.plot
-@pyimport matplotlib2tikz
 
 ################
 # Plotting tools
@@ -78,7 +77,7 @@ to_file_name(s) = replace(lowercase(s), " ", "_")
 function save_latex(fig_path, title)
   mkpath(fig_path)
 
-  matplotlib2tikz.save("$(fig_path)/$(title).tex",
-                       figureheight="\\figureheight",
-                       figurewidth="\\figurewidth")
+  matplotlib2tikz[:save]("$(fig_path)/$(title).tex",
+                         figureheight="\\figureheight",
+                         figurewidth="\\figurewidth")
 end

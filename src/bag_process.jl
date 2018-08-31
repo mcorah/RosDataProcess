@@ -1,6 +1,3 @@
-@pyimport yaml
-@pyimport rosbag
-
 ##################
 # Bags and loading
 ##################
@@ -15,11 +12,11 @@ end
 AnnotatedBag(x) = AnnotatedBag("$(x).yaml", "$(x).bag")
 
 function load_yaml(x::AbstractString)
-  yaml.load(open(x))
+  yaml[:load](open(x))
 end
 
 function load_bag(x::AbstractString)
-  rosbag.Bag(x)
+  rosbag[:Bag](x)
 end
 
 get_name(x::AbstractString) = match(r".*\.", x).match[1:end-1]
