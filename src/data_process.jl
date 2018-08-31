@@ -12,13 +12,13 @@ function intersect_intervals(series; num_samples = 100)
   lower = maximum(get_time(x)[1] for x in series if length(get_time(x)) > 0)
   upper = minimum(get_time(x)[end] for x in series if length(get_time(x)) > 0)
 
-  linspace(lower, upper, num_samples)
+  range(lower, stop=upper, length=num_samples)
 end
 
 # intersect regular time series (such as produced using published iterations or
 # with a auto-generated linear index)
 function intersect_regular(series::AbstractArray{<:AbstractArray})
-  sort(reduce(intersect, series[1], series[2:end]))
+  sort(reduce(intersect, series[2:end], init=series[1]))
 end
 
 # Interpolate a deconstructed time series at a single point
@@ -29,17 +29,17 @@ end
 # for efficient linear indexing
 function interpolate_(sample_time::Real, ts, data, lower_bound = 0)
   if sample_time <= ts[1]
-    return (slicedim(data, 1, 1), 0)
+    return (data[1,:], 0)
   elseif sample_time >= ts[end]
-    return (slicedim(data, 1, length(ts)), length(ts))
+    return (data[length(ts),:], length(ts))
   end
 
   for ii = lower_bound+1:length(ts)
     if sample_time < ts[ii]
-      dl = slicedim(data, 1, ii-1)
+      dl = data[ii-1,:]
       tl = ts[ii-1]
 
-      du = slicedim(data, 1, ii)
+      du = data[ii,:]
       tu = ts[ii]
 
       value = dl + (du - dl) * (sample_time - tu) / (tu - tl)
@@ -87,7 +87,7 @@ end
 function get_at_time_(time::Real, x::TimeSeries, lower_bound = 1)
   for ii = lower_bound:size(x, 1)
     if get_time(x)[ii] == time
-      return (slicedim(get_data(x), 1, ii), ii)
+      return (get_data(x)[ii,:], ii)
     end
   end
 
@@ -116,10 +116,10 @@ function intersect_interpolate(series::AbstractArray{<:TimeSeries}; x...)
   # compute the interval
   interval = intersect_intervals(series; x...)
 
-  cat_dim = ndims(series[1]) + 1
+  cat_dim = maximum(ndims, series) + 1
 
   # interpolate and concatenate data
-  cat(cat_dim, map(x->interpolate(interval, x), series)...)
+  cat(dims=cat_dim, map(x->interpolate(interval, x), series)...)
 end
 
 # Exactly intersect intervals  for a set of time series and return a
@@ -127,9 +127,9 @@ end
 function intersect_series(series::AbstractArray{<:TimeSeries})
   time = intersect_regular(map(get_time, series))
 
-  cat_dim = ndims(series[1]) + 1
+  cat_dim = maximum(ndims, series) + 1
 
-  cat(cat_dim, map(x->get_at_time(time, x), series)...)
+  cat(dims=cat_dim, map(x->get_at_time(time, x), series)...)
 end
 
 ##############################
@@ -140,5 +140,5 @@ end
 # Default dimension is two as samples are typically in the second dimension for
 # TimeSeries.
 function standard_error(x, dim = 2)
-  std(x, dim) ./ sqrt(size(x, dim))
+  std(x, dims=dim) ./ sqrt(size(x, dim))
 end

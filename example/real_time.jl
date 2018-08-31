@@ -22,7 +22,7 @@ foreach(println, get_topic_names(bags[1]))
 params = Dict(:num_decentralized =>
               "dynamic_exploration/num_decentralized_planning_rounds")
 
-ranges = map(x -> x[1] => get_range(x[2], bags), params)
+ranges = Dict(key => get_range(value, bags) for (key, value) in params)
 
 # Plot entropy results.
 figure()

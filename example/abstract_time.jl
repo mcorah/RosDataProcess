@@ -24,7 +24,7 @@ params = Dict(:num_robots => "num_robots",
               :num_decentralized =>
               "kinematic_exploration/num_decentralized_planning_rounds")
 
-ranges = map(x -> x[1] => get_range(x[2], bags), params)
+ranges = Dict(key => get_range(value, bags) for (key, value) in params)
 
 for num_robots = ranges[:num_robots]
   figure()

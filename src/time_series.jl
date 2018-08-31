@@ -86,13 +86,13 @@ indices_match(a::TimeSeries, b::TimeSeries) = indices_match(get_time(a),
 # See documentation at:
 # https://docs.julialang.org/en/latest/manual/interfaces/#man-interface-array-1
 
-import Base.size, Base.linearindexing, Base.getindex, Base.setindex!,
+import Base.size, Base.IndexStyle, Base.getindex, Base.setindex!,
 Base.similar
 
 # This deviates somewhat from the documentation but also fits the actual
 # definitions in the code so these seem to be the right way to define everything
 size(x::TimeSeries) = size(get_data(x))
-linearindexing{T <: TimeSeries}(::Type{T}) = linearindexing(data_type(T))
+IndexStyle(::Type{T}) where {T<:TimeSeries} = IndexStyle(data_type(T))
 getindex(x::TimeSeries, i::Int) = getindex(get_data(x), i)
 getindex(x::TimeSeries{<:Any,N}, I::Vararg{Int,N}) where {N} = getindex(get_data(x),I...)
 setindex!(x::TimeSeries, v, I...) = setindex!(get_data(x), v, I...)

@@ -18,7 +18,7 @@ function profile_fun()
                 :num_decentralized =>
                 "kinematic_exploration/num_decentralized_planning_rounds")
 
-  ranges = map(x -> x[1] => get_range(x[2], bags), params)
+  ranges = Dict(key => get_range(value, bags) for (key, value) in params)
   for num_robots = ranges[:num_robots][1:1]
     for (ii, num_decentralized) = enumerate(ranges[:num_decentralized][1:1])
       fixed = Dict(params[:num_robots] => num_robots,

@@ -16,7 +16,7 @@ function plot(x::TimeSeries; kws...)
 end
 
 function plot_mean(x::TimeSeries; kws...)
-  plot(mean(x,2); kws...)
+  plot(mean(x, dims=2); kws...)
 end
 
 # Plot the standard error for a time series as a filled polygon.
@@ -27,7 +27,7 @@ function plot_standard_error(x::TimeSeries{<:Any,2}; color="k", alpha=0.2,
 
   # reverse only handles 1D arrays
   stdes = standard_error(data, 2)[:]
-  means = mean(data, 2)[:]
+  means = mean(data, dims=2)[:]
 
   xs = vcat(time, reverse(time))
   ys = vcat(means+stdes, reverse(means-stdes))
