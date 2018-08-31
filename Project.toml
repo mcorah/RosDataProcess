@@ -1,0 +1,11 @@
+name = "RosDataProcess"
+uuid = "8398af4e-ac9a-11e8-11b5-d9e63cf3a45a"
+authors = ["Micah Corah"]
+version = "0.0.0"
+
+[deps]
+Colors = "5ae59095-9a9b-59fe-a467-6f913c188581"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
+PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
