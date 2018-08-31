@@ -17,26 +17,23 @@
 # be quite applicable due to inflexibility in representation of time and
 # inflexibility with data dimension respectively
 
-type TimeSeries{D, N, AT <: AbstractVector, AD <: AbstractArray} <: AbstractArray{D,N}
+struct TimeSeries{D, N, AT <: AbstractVector, AD <: AbstractArray} <: AbstractArray{D,N}
 
   time::AT
   data::AD
 
   # Here we enforce the constraint that AT <: AbstractArray{D,N}
-  function TimeSeries(time, data::AbstractArray{D,N})
+  function TimeSeries(time::AT, data::AD) where {AT <: AbstractVector, AD <: AbstractArray}
     if size(time, 1) != size(data, 1)
       error("first dimension of time and data do not match")
     end
 
     assert_sorted(time)
 
-    new(time, data)
+    new{eltype(AD), ndims(AD), AT, AD}(time, data)
   end
 end
 
-function TimeSeries{D,N,AT}(time::AT, data::AbstractArray{D,N})
-  TimeSeries{D,N,AT,typeof(data)}(time, data)
-end
 TimeSeries(data) = TimeSeries(Base.OneTo(size(data,1)), data)
 
 # Copy constructor
@@ -45,13 +42,13 @@ TimeSeries(x::TimeSeries) = TimeSeries(get_time(x), get_data(x))
 #######################################
 # Internal type queries for convenience
 #######################################
-time_type{D,N,AT,AD}(::Type{TimeSeries{D,N,AT,AD}}) = AT
-time_type{T <: TimeSeries}(::T) = time_type(T)
-data_type{D,N,AT,AD}(::Type{TimeSeries{D,N,AT,AD}}) = AD
-data_type{T <: TimeSeries}(::T) = data_type(T)
+time_type(::Type{TimeSeries{<:Any,<:Any,AT}}) where {AT} = AT
+time_type(::T) where {T <: TimeSeries} = time_type(T)
+data_type(::Type{TimeSeries{D,N,AT,AD}}) where {D,N,AT,AD} = AD
+data_type(::T) where {T <: TimeSeries} = data_type(T)
 
-time_eltype{D,N,AT,AD}(::Type{TimeSeries{D,N,AT,AD}}) = eltype(AT)
-time_eltype{T <: TimeSeries}(::T) = time_eltype(T)
+time_eltype(::Type{TimeSeries{<:Any,<:Any,AT}}) where {AT} = eltype(AT)
+time_eltype(::T) where {T <: TimeSeries} = time_eltype(T)
 
 ######################
 # TimeSeries interface
@@ -97,13 +94,13 @@ Base.similar
 size(x::TimeSeries) = size(get_data(x))
 linearindexing{T <: TimeSeries}(::Type{T}) = linearindexing(data_type(T))
 getindex(x::TimeSeries, i::Int) = getindex(get_data(x), i)
-getindex{D,N}(x::TimeSeries{D,N}, I::Vararg{Int,N}) = getindex(get_data(x),I...)
+getindex(x::TimeSeries{<:Any,N}, I::Vararg{Int,N}) where {N} = getindex(get_data(x),I...)
 setindex!(x::TimeSeries, v, I...) = setindex!(get_data(x), v, I...)
 
 # "similar" will produce a new TimeSeries rather than an Array so that we can
 # keep the time data around. The data is in turn defined recursively according
 # to its type with another call to similar.
-function similar{S, N}(x::TimeSeries, ::Type{S}, dims::Dims{N})
+function similar(x::TimeSeries, ::Type{S}, dims::Dims{N}) where {S, N}
   if size(x, 1) != dims[1]
     error("similar not defined for varying first dimension of a TimeSeries")
   end

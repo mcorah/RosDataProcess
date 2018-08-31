@@ -17,7 +17,7 @@ end
 
 # intersect regular time series (such as produced using published iterations or
 # with a auto-generated linear index)
-function intersect_regular{T <: AbstractArray}(series::AbstractArray{T})
+function intersect_regular(series::AbstractArray{<:AbstractArray})
   sort(reduce(intersect, series[1], series[2:end]))
 end
 
@@ -56,7 +56,7 @@ interpolate(sample_time::Real, ts, data) = interpolate_(sample_time, ts,
                                                         data)[1]
 # Interpolate a deconstructed time series at a series of points
 # sample_times should be sorted
-function interpolate{T<:Real}(sample_times::AbstractArray{T,1}, ts, data)
+function interpolate(sample_times::AbstractArray{<:Real,1}, ts, data)
   assert_sorted(sample_times)
 
   output_dimension = (length(sample_times), size(data)[2:end]...)
@@ -96,7 +96,7 @@ end
 
 # Access a time series at a given time or array of times
 get_at_time(time::Real, x::TimeSeries) = get_at_time_(time, x)[1]
-function get_at_time{T<:Real}(times::AbstractArray{T,1}, x::TimeSeries)
+function get_at_time(times::AbstractArray{<:Real,1}, x::TimeSeries)
   assert_sorted(times)
 
   output_dimension = (length(times), size(x)[2:end]...)
@@ -112,7 +112,7 @@ end
 
 # Intersect intervals (and resample) for a set of time series and return a
 # concatenated time series
-function intersect_interpolate{T <: TimeSeries}(series::AbstractArray{T}; x...)
+function intersect_interpolate(series::AbstractArray{<:TimeSeries}; x...)
   # compute the interval
   interval = intersect_intervals(series; x...)
 
@@ -124,7 +124,7 @@ end
 
 # Exactly intersect intervals  for a set of time series and return a
 # concatenated time series
-function intersect_series{T <: TimeSeries}(series::AbstractArray{T})
+function intersect_series(series::AbstractArray{<:TimeSeries})
   time = intersect_regular(map(get_time, series))
 
   cat_dim = ndims(series[1]) + 1

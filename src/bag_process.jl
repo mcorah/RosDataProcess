@@ -2,7 +2,7 @@
 # Bags and loading
 ##################
 
-immutable AnnotatedBag
+struct AnnotatedBag
   yaml
   bag
   AnnotatedBag(yaml_name, bag_name) =

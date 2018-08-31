@@ -20,8 +20,8 @@ function plot_mean(x::TimeSeries; kws...)
 end
 
 # Plot the standard error for a time series as a filled polygon.
-function plot_standard_error{D}(x::TimeSeries{D,2}; color="k",
-                                alpha=0.2, linewidth=0.0, kws...)
+function plot_standard_error(x::TimeSeries{<:Any,2}; color="k", alpha=0.2,
+                             linewidth=0.0, kws...)
   time = get_time(x)
   data = get_data(x)
 
