@@ -1,7 +1,4 @@
-using PyCall
-using PyPlot
 import PyPlot.plot
-using Colors
 @pyimport matplotlib2tikz
 
 ################

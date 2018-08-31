@@ -1,5 +1,7 @@
 module RosDataProcess
 
+using LinearAlgebra, PyCall, PyPlot, Colors, Statistics
+
 export TimeSeries, time_type, data_type, time_eltype, get_time, get_data,
 mutate_time, mutate_data, map_time, map_data, indices_match
 

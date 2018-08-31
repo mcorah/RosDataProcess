@@ -1,4 +1,3 @@
-using PyCall
 @pyimport yaml
 @pyimport rosbag
 
