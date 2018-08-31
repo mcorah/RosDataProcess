@@ -1,3 +1,4 @@
+__precompile__()
 module RosDataProcess
 
 using LinearAlgebra, PyCall, PyPlot, Colors, Statistics
