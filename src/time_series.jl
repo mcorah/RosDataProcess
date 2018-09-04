@@ -34,6 +34,9 @@ struct TimeSeries{D, N, AT <: AbstractVector, AD <: AbstractArray} <: AbstractAr
   end
 end
 
+# Map style constructor
+TimeSeries(f, time::AbstractArray) = TimeSeries(time, map(f, time))
+
 TimeSeries(data) = TimeSeries(Base.OneTo(size(data,1)), data)
 
 # Copy constructor
