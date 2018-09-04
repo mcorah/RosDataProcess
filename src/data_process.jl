@@ -52,8 +52,12 @@ function interpolate_(sample_time::Real, ts, data, lower_bound = 0)
   throw(ArgumentError("Interpolate escaped bounds"))
 end
 
-interpolate(sample_time::Real, ts, data) = interpolate_(sample_time, ts,
-                                                        data)[1]
+function interpolate_(sample_time::Real, series::TimeSeries, x...)
+  interpolate_(sample_time, get_time(series), get_data(series), x...)
+end
+
+interpolate(sample_time::Real, x...) = interpolate_(sample_time, x...)[1]
+
 # Interpolate a deconstructed time series at a series of points
 # sample_times should be sorted
 function interpolate(sample_times::AbstractArray{<:Real,1}, ts, data)
@@ -132,9 +136,63 @@ function intersect_series(series::AbstractArray{<:TimeSeries})
   cat(dims=cat_dim, map(x->get_at_time(time, x), series)...)
 end
 
-##############################
-# More general data processing
-##############################
+##########
+# Calculus
+##########
+
+# The following code relates to numeric integration and differentiation of time
+# series data
+
+# differentiation algorithms
+struct Windowed end; struct Discrete end
+
+# default algorithm
+function differentiate(x::TimeSeries, method=Windowed(); kws...)
+  differentiate(x, method=method; kws...)
+end
+
+# concrete implementations
+
+# Compute the derivative over a window. Interpolate for smoothness
+function differentiate_windowed(x::TimeSeries, lower_time, upper_time,
+                                lower_lb = 0, upper_lb = 0)
+  lower_time = max(lower_time, get_time(x)[1])
+  upper_time = min(upper_time, get_time(x)[end])
+
+  (lower_value, lower_lb) = interpolate_(lower_time, x, lower_lb)
+  (upper_value, upper_lb) = interpolate_(upper_time, x, upper_lb)
+
+  derivative = (upper_value - lower_value) / (upper_time - lower_time)
+
+  (derivative, lower_lb, upper_lb)
+end
+
+# Differentiate the TimeSeries using a fixed time window
+# I could potentially implement this instead by interpolating arrays rather than
+# value. That would be slightly slower but also cleaner.
+function differentiate(x::TimeSeries, method::Windowed;
+                       time=get_time(x), window=1/(length(time)-1))
+  assert_sorted(time)
+
+  output_dimension = (length(time), size(x)[2:end]...)
+  ret = similar(x, output_dimension)
+
+  lower_lb = 0
+  upper_lb = 0
+
+  hw = window / 2
+
+  for (ii, t) = enumerate(time)
+    (ret[ii,:], lower_lb, upper_lb) = differentiate_windowed(x, t-hw, t+hw,
+                                                             lower_lb, upper_lb)
+  end
+
+  ret
+end
+
+############
+# Statistics
+############
 
 # Compute standard error in a given dimension.
 # Default dimension is two as samples are typically in the second dimension for
