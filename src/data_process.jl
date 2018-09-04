@@ -42,7 +42,7 @@ function interpolate_(sample_time::Real, ts, data, lower_bound = 0)
       du = data[ii,:]
       tu = ts[ii]
 
-      value = dl + (du - dl) * (sample_time - tu) / (tu - tl)
+      value = dl + (du - dl) * (sample_time - tl) / (tu - tl)
 
       return (value, ii - 1)
     end
