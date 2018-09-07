@@ -137,6 +137,17 @@ function intersect_series(series::AbstractArray{<:TimeSeries})
   cat(dims=cat_dim, map(x->get_at_time(time, x), series)...)
 end
 
+# Returns a view into x at given indices
+function select_indices(inds, x::TimeSeries)
+  TimeSeries(selectdim(get_time(x), 1, inds), selectdim(get_data(x), 1, inds))
+end
+
+# Returns a view into x for times where f is true
+function select_times(f, x::TimeSeries)
+  inds = [ind for (ind, t) in enumerate(get_time(x)) if f(t)]
+  select_indices(inds, x)
+end
+
 ##########
 # Calculus
 ##########

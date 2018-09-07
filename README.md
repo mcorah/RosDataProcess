@@ -33,6 +33,7 @@ It seems to also be a good idea to add `PYTHON` to your environment so that
 * `example/minimal.jl`: Some minimal examples of usage of `TimeSeries`
 * `example/derivative_example.jl`: Demonstrates computation of the numeric
   derivative of a time series
+* `example/select_times_example.jl`: Demonstrates the `select_times` method
 * `example/abstract_time.jl`: Reproduces several of the plots from the AURO18
   paper for kinematic exploration with separate abstract iterations
 * `example/real_time.jl`: Reproduces one of the plots from the AURO18

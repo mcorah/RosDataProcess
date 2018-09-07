@@ -19,8 +19,8 @@ mutate_time, mutate_data, map_time, map_data, indices_match
 include("time_series.jl")
 
 export normalize_start, intersect_intervals, intersect_regular, interpolate,
-get_at_time, intersect_interpolate, intersect_series, standard_error,
-differentiate
+get_at_time, intersect_interpolate, intersect_series, select_times,
+select_indices, standard_error, differentiate
 
 include("data_process.jl")
 
