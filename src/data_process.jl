@@ -8,7 +8,8 @@ end
 normalize_start(time, start = time[1]) = map(x -> x - start, time)
 
 # intersect general time series
-function intersect_intervals(series; num_samples = 100)
+const default_num_samples = 100
+function intersect_intervals(series; num_samples = default_num_samples)
   lower = maximum(get_time(x)[1] for x in series if length(get_time(x)) > 0)
   upper = minimum(get_time(x)[end] for x in series if length(get_time(x)) > 0)
 

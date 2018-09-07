@@ -128,7 +128,7 @@ end
 # Read messages (see read_topic, above) from multiple bags and possibly
 # interpolate into a multi-dimensional time series
 function read_topic(topic, bags::AbstractArray{AnnotatedBag}; interpolate=false,
-                    num_samples, kws...)
+                    num_samples=default_num_samples, kws...)
   trials = map(bags) do bag
     read_topic(topic, bag; kws...)
   end
