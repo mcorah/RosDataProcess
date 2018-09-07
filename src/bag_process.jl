@@ -128,14 +128,13 @@ end
 # Read messages (see read_topic, above) from multiple bags and possibly
 # interpolate into a multi-dimensional time series
 function read_topic(topic, bags::AbstractArray{AnnotatedBag}; interpolate=false,
-                    kws...)
+                    num_samples, kws...)
   trials = map(bags) do bag
     read_topic(topic, bag; kws...)
   end
 
   if interpolate
-    interpolate_args = Dict(x for x in kws if x[1] == :num_samples)
-    intersect_interpolate(trials; interpolate_args...)
+    intersect_interpolate(trials; num_samples=num_samples)
   else
     trials
   end
