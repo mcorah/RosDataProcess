@@ -42,7 +42,7 @@ end
 get_name(x::AbstractString) = match(r".*\.", x).match[1:end-1]
 
 filter_extension(file_names, extension) =
-  filter(x->occursin(Regex("\\.$(extension)"), x), file_names)
+  filter(x->occursin(Regex("\\.$(extension)\$"), x), file_names)
 
 function load_directory(dir::AbstractString; preprocess=true)
   file_names = readdir(dir)
