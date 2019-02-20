@@ -59,13 +59,21 @@ end
 
 interpolate(sample_time::Real, x...) = interpolate_(sample_time, x...)[1]
 
+# hack to get type of array to allocate after division
+function division_output_type(x::Type)
+  types = Base.return_types(/, Tuple{x, Float64})
+  promote_type(types...)
+end
+
 # Interpolate a deconstructed time series at a series of points
 # sample_times should be sorted
 function interpolate(sample_times::AbstractArray{<:Real,1}, ts, data)
   assert_sorted(sample_times)
 
   output_dimension = (length(sample_times), size(data)[2:end]...)
-  ret = similar(data, output_dimension)
+  output_element_type = division_output_type(eltype(data))
+
+  ret = similar(data, output_element_type, output_dimension)
   lower_bound = 0
 
   for ii = 1:size(ret, 1)
