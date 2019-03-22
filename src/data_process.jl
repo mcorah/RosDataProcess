@@ -191,7 +191,7 @@ end
 # I could potentially implement this instead by interpolating arrays rather than
 # value. That would be slightly slower but also cleaner.
 function differentiate(x::TimeSeries, method::Windowed;
-                       time=get_time(x), window=1/(length(time)-1))
+                       time=get_time(x), window=(time[end]-time[1])/(length(time)-1))
   assert_sorted(time)
 
   output_dimension = (length(time), size(x)[2:end]...)
