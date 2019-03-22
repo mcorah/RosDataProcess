@@ -195,7 +195,7 @@ function differentiate(x::TimeSeries, method::Windowed;
   assert_sorted(time)
 
   output_dimension = (length(time), size(x)[2:end]...)
-  ret = similar(x, output_dimension)
+  ret = TimeSeries(time, similar(get_data(x), output_dimension))
 
   lower_lb = 0
   upper_lb = 0
