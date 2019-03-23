@@ -112,7 +112,8 @@ end
 # Read messages from a given topic and bag into a time series according to
 # time-stamps in the bag
 # TODO: Use header stamps?
-function read_topic(topic, bag::AnnotatedBag; accessor = x->x)
+function read_topic(topic, bag::AnnotatedBag; accessor = x->x,
+                    normalize_start_time=true)
   topic_message_time = collect(read_messages(bag, [topic]))
 
   # Access elements of the tuple
@@ -121,7 +122,12 @@ function read_topic(topic, bag::AnnotatedBag; accessor = x->x)
   ros_times = [x[3] for x in topic_message_time]
   data = [accessor(x[2]) for x in topic_message_time]
 
-  times = to_sec(normalize_start(ros_times))
+  if normalize_start_time
+    times = to_sec(normalize_start(ros_times))
+  else
+    times = to_sec(ros_times)
+  end
+
   TimeSeries(times, data)
 end
 
