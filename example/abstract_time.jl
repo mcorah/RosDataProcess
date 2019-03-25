@@ -42,8 +42,8 @@ for num_robots = ranges[:num_robots]
     println("  Reading bags")
     entropy = read_series("/kinematic_exploration/iteration",
                           "/kinematic_exploration/entropy_reduction", trials;
-                          access_data=x->x[:data],
-                          access_time=x-> num_robots * x[:data],
+                          access_data=x->x.data,
+                          access_time=x-> num_robots * x.data,
                           intersect=true)
 
     println("  Plotting data")
@@ -51,7 +51,7 @@ for num_robots = ranges[:num_robots]
                         trials=false, color=colors[ii])
 
     legend_string(n) = (n == 0 ? "G" : "D\$_$(n)\$")
-    plots[:mean][1][:set_label](legend_string(num_decentralized))
+    plots[:mean][1].set_label(legend_string(num_decentralized))
   end
 
   title("Entropy reduction: $(num_robots) robots")

@@ -35,7 +35,7 @@ for (ii, num_decentralized) = enumerate(ranges[:num_decentralized])
   trials = filter_bags(fixed, bags)
 
   println("  Reading bags")
-  entropy = read_topic("/entropy", trials; accessor=x->x[:data],
+  entropy = read_topic("/entropy", trials; accessor=x->x.data,
                        interpolate=true)
 
   println("  Plotting data")
@@ -43,7 +43,7 @@ for (ii, num_decentralized) = enumerate(ranges[:num_decentralized])
                       trials=false, color=colors[ii])
 
   legend_string(n) = (n == 0 ? "G" : "D\$_$(n)\$")
-  plots[:mean][1][:set_label](legend_string(num_decentralized))
+  plots[:mean][1].set_label(legend_string(num_decentralized))
 end
 
 title("Entropy reduction: dynamic exploration")

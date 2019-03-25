@@ -15,7 +15,7 @@ function AnnotatedBag(x::AbstractString; preprocess=true)
 end
 
 function load_yaml(x::AbstractString)
-  yaml[:load](open(x))
+  yaml.load(open(x))
 end
 
 # Load a yaml file. Optionally, save/load the preprocessed yaml file.
@@ -36,7 +36,7 @@ function load_yaml_data(x::AbstractString; preprocess=true)
 end
 
 function load_bag(x::AbstractString)
-  rosbag[:Bag](x)
+  rosbag.Bag(x)
 end
 
 get_name(x::AbstractString) = match(r".*\.", x).match[1:end-1]
@@ -52,7 +52,7 @@ function load_directory(dir::AbstractString; preprocess=true)
 end
 
 import Base.close
-close(x::AnnotatedBag) = x.bag[:close]()
+close(x::AnnotatedBag) = x.bag.close()
 
 ##################
 # Bag manipulation
@@ -89,7 +89,7 @@ end
 # Time conversion
 #################
 
-to_sec(x::PyObject) = x[:to_sec]()
+to_sec(x::PyObject) = x.to_sec()
 to_sec(x::AbstractArray) = map(to_sec, x)
 to_sec(x::TimeSeries) = map_time(to_sec, x)
 
@@ -100,12 +100,12 @@ to_sec(x::TimeSeries) = map_time(to_sec, x)
 function get_topic_names(bag)
   # Got this from: http://wiki.ros.org/rosbag/Cookbook
   # Not sure what this thing is returning
-  keys(bag.bag[:get_type_and_topic_info]()[2])
+  keys(bag.bag.get_type_and_topic_info()[2])
 end
 
 # Thin wrapper around the python read_messages function
 function read_messages(bag::AnnotatedBag, topics)
-  bag.bag[:read_messages](topics=topics)
+  bag.bag.read_messages(topics=topics)
 end
 
 

@@ -27,8 +27,8 @@ function profile_fun()
 
       entropy = read_series("/kinematic_exploration/iteration",
                             "/kinematic_exploration/entropy_reduction", trials;
-                            access_data=x->x[:data],
-                            access_time=x-> num_robots * x[:data],
+                            access_data=x->x.data,
+                            access_time=x-> num_robots * x.data,
                             intersect=true)
     end
   end
