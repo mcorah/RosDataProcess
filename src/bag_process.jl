@@ -44,9 +44,15 @@ get_name(x::AbstractString) = match(r".*\.", x).match[1:end-1]
 filter_extension(file_names, extension) =
   filter(x->occursin(Regex("\\.$(extension)\$"), x), file_names)
 
+function get_bag_names(dir)
+  file_names = readdir(dir)
+
+  map(get_name, filter_extension(file_names, "bag"))
+end
+
 function load_directory(dir::AbstractString; preprocess=true)
   file_names = readdir(dir)
-  names = map(get_name, filter_extension(file_names, "bag"))
+  names = get_bag_names(dir)
 
   map(x->AnnotatedBag("$(dir)/$(x)", preprocess=preprocess), names)
 end
