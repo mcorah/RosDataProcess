@@ -8,9 +8,22 @@ const yaml = PyNULL()
 const rosbag = PyNULL()
 
 function __init__()
-  copy!(matplotlib2tikz, pyimport_conda("matplotlib2tikz", "matplotlib2tikz"))
+  try
+    copy!(matplotlib2tikz, pyimport("tikzplotlib"))
+  catch e
+    println("Could not import tikzplotlib, trying matploblib2tikz instead")
+    copy!(matplotlib2tikz, pyimport("matplotlib2tikz"))
+  end
+
   copy!(yaml, pyimport_conda("yaml", "pyyaml"))
-  copy!(rosbag, pyimport("rosbag"))
+
+  try
+    copy!(rosbag, pyimport("rosbag"))
+  catch e
+    println("Could not import rosbag.")
+    println("Bags will not load, but other functions will work.")
+  end
+
 end
 
 export TimeSeries, time_type, data_type, time_eltype, get_time, get_data,
