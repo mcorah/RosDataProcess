@@ -220,3 +220,27 @@ end
 function standard_error(x, dim = 2)
   std(x, dims=dim) ./ sqrt(size(x, dim))
 end
+
+#######
+# Other
+#######
+
+# Returns first point to cros y = value
+function first_horizontal_intersection(x::TimeSeries{N,1}, value) where {N}
+  for ii = 1:size(x, 1)-1
+    y1 = x[ii]
+    y2 = x[ii+1]
+
+    # Test for crossing
+    if y1 <= value <= y2 || y2 <= value <= y1
+      x1 = get_time(x)[ii]
+      x2 = get_time(x)[ii+1]
+
+      return x1 + (x2 - x1) * (value - y1) / (y2 - y1)
+    end
+  end
+
+  # If it doesn't reach the value, return infinity
+  # (Assuming a monotonic input which reaches at infinity)
+  return Inf
+end

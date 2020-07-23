@@ -38,7 +38,7 @@ select_indices, standard_error, differentiate
 include("data_process.jl")
 
 export plot, plot_standard_error, plot_mean, plot_mean, plot_trials,
-generate_colors
+generate_colors, first_horizontal_intersection
 
 include("plotting.jl")
 
