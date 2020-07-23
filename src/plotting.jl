@@ -37,7 +37,7 @@ end
 
 # Often, it is to have a single compact plot method for a set of trials
 function plot_trials(x::TimeSeries; mean=false, standard_error=false,
-                     trials=false, kws...)
+                     trials=false, label=Nothing, kws...)
   ret = Dict{Symbol, Any}()
 
   if trials
@@ -45,7 +45,7 @@ function plot_trials(x::TimeSeries; mean=false, standard_error=false,
   end
 
   if mean
-    ret[:mean] = plot_mean(x; kws...)
+    ret[:mean] = plot_mean(x; label=label, kws...)
   end
 
   if standard_error
