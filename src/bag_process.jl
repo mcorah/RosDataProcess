@@ -106,7 +106,7 @@ to_sec(x::TimeSeries) = map_time(to_sec, x)
 function get_topic_names(bag)
   # Got this from: http://wiki.ros.org/rosbag/Cookbook
   # Not sure what this thing is returning
-  keys(bag.bag.get_type_and_topic_info()[2])
+  collect(keys(bag.bag.get_type_and_topic_info()[2]))
 end
 
 # Thin wrapper around the python read_messages function
