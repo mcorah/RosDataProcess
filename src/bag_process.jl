@@ -153,21 +153,29 @@ function read_topic(topic, bags::AbstractArray{AnnotatedBag}; interpolate=false,
 end
 
 # Read an abstract time series with published data and time from a single bag
-function read_series(time_topic, data_topic, bag::AnnotatedBag;
-                    access_time=x->x, access_data=x->x)
+function read_series(time_topic, data_topic::String, bag::AnnotatedBag;
+                    access_time=x->x, access_data=x->x,
+                    ignore_timing_mismatch=false
+                   )
   # tuple is (topic, data, time)
   tuples = collect(read_messages(bag, [time_topic, data_topic]))
 
   time = [access_time(x[2]) for x in tuples if x[1] == time_topic]
   data = [access_data(x[2]) for x in tuples if x[1] == data_topic]
 
+  if ignore_timing_mismatch
+    len = min(size(time, 1), size(data, 1))
+    resize!(time, len)
+    resize!(data, len)
+  end
+
   TimeSeries(time, data)
 end
 
 # Read an abstract time series (see read_series, above) from multiple bags and
 # possibly intersect into a single multi-dimensional time series
-function read_series(time_topic, data_topic, bags::AbstractArray{AnnotatedBag};
-                     intersect=false, kws...)
+function read_series(time_topic, data_topic::String,
+                     bags::AbstractArray{AnnotatedBag}; intersect=false, kws...)
   trials = map(bags) do bag
     read_series(time_topic, data_topic, bag; kws...)
   end
@@ -176,5 +184,22 @@ function read_series(time_topic, data_topic, bags::AbstractArray{AnnotatedBag};
     intersect_series(trials)
   else
     trials
+  end
+end
+
+# Return an array containing all matching topics
+first_bag(bags::AbstractArray{AnnotatedBag}) = first(bags)
+first_bag(bag::AnnotatedBag) = bag
+function read_series(time_topic, data_topic::Regex, bags;
+                     kws...)
+  bag = first_bag(bags)
+  topics = get_topic_names(bag)
+
+  matches = filter(x->occursin(data_topic, x), topics)
+
+  @show matches
+
+  map(matches) do match
+    read_series(time_topic, match, bags; kws...)
   end
 end
