@@ -71,6 +71,7 @@ time_eltype(::T) where {T <: TimeSeries} = time_eltype(T)
 
 get_time(x::TimeSeries) = x.time
 get_data(x::TimeSeries) = x.data
+get_data(x::AbstractArray) = x
 
 mutate_time(f, x::TimeSeries) = TimeSeries(f(x.time), x.data)
 mutate_data(f, x::TimeSeries) = TimeSeries(x.time, f(x.data))
