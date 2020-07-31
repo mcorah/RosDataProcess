@@ -44,8 +44,8 @@ include("plotting.jl")
 
 export AnnotatedBag, load_yaml, load_yaml_data, load_bag, get_name,
 get_bag_names, filter_extension, load_directory, get_param, filter_bags,
-get_range, sort_bags, to_sec, get_topic_names, read_topic, read_series,
-to_file_name, save_latex
+get_range, sort_bags, to_sec, get_topic_names, first_bag, read_topic,
+read_series, to_file_name, save_latex
 
 include("bag_process.jl")
 
