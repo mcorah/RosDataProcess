@@ -197,8 +197,6 @@ function read_series(time_topic, data_topic::Regex, bags;
 
   matches = filter(x->occursin(data_topic, x), topics)
 
-  @show matches
-
   map(matches) do match
     read_series(time_topic, match, bags; kws...)
   end
