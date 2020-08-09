@@ -74,10 +74,10 @@ generate_colors(x::Integer) =
 # Changes a title to an appropriate file name
 to_file_name(s) = replace(lowercase(s), " ", "_")
 
-function save_latex(fig_path, title)
+function save_latex(fig_path, title; kwargs...)
   mkpath(fig_path)
 
   matplotlib2tikz.save("$(fig_path)/$(title).tex",
                          figureheight="\\figureheight",
-                         figurewidth="\\figurewidth")
+                         figurewidth="\\figurewidth"; kwargs...)
 end
