@@ -118,7 +118,7 @@ end
 # Read messages from a given topic and bag into a time series according to
 # time-stamps in the bag
 # TODO: Use header stamps?
-function read_topic(topic, bag::AnnotatedBag; accessor = x->x,
+function read_topic(topic::String, bag::AnnotatedBag; accessor = x->x,
                     normalize_start_time=true)
   topic_message_time = collect(read_messages(bag, [topic]))
 
@@ -139,7 +139,7 @@ end
 
 # Read messages (see read_topic, above) from multiple bags and possibly
 # interpolate into a multi-dimensional time series
-function read_topic(topic, bags::AbstractArray{AnnotatedBag}; interpolate=false,
+function read_topic(topic::String, bags::AbstractArray{AnnotatedBag}; interpolate=false,
                     num_samples=default_num_samples, kws...)
   trials = map(bags) do bag
     read_topic(topic, bag; kws...)
@@ -149,6 +149,17 @@ function read_topic(topic, bags::AbstractArray{AnnotatedBag}; interpolate=false,
     intersect_interpolate(trials; num_samples=num_samples)
   else
     trials
+  end
+end
+# Return an array containing all matching topics
+function read_topic(topic::Regex, bags; kws...)
+  bag = first_bag(bags)
+  topics = get_topic_names(bag)
+
+  matches = filter(x->occursin(topic, x), topics)
+
+  map(matches) do match
+    read_topic(match, bags; kws...)
   end
 end
 
