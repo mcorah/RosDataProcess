@@ -50,6 +50,9 @@ function get_bag_names(dir)
   map(get_name, filter_extension(file_names, "bag"))
 end
 
+function load_directory(dirs::Array; kwargs...)
+  vcat(map(x->load_directory(x, kwargs...), dirs)...)
+end
 function load_directory(dir::AbstractString; preprocess=true)
   file_names = readdir(dir)
   names = get_bag_names(dir)
