@@ -78,6 +78,6 @@ function save_latex(fig_path, title; kwargs...)
   mkpath(fig_path)
 
   matplotlib2tikz.save("$(fig_path)/$(title).tex",
-                         figureheight="\\figureheight",
-                         figurewidth="\\figurewidth"; kwargs...)
+                       axis_height="\\figureheight",
+                       axis_width="\\figurewidth"; kwargs...)
 end
