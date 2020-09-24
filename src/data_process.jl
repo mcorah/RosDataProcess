@@ -123,6 +123,26 @@ function get_at_time(times::AbstractArray{<:Real,1}, x::TimeSeries)
   TimeSeries(times, ret)
 end
 
+function get_at_nearest_time(time::Real, x::TimeSeries)
+  ii = searchsortedlast(get_time(x), time)
+  jj = searchsortedfirst(get_time(x), time)
+
+  output_index = 0
+  best_error = Inf
+
+  for index in (ii, jj)
+    if 0 < index <= size(x,1)
+      error = abs(time - get_time(x)[index])
+      if error < best_error
+        best_error = error
+        output_index = index
+      end
+    end
+  end
+
+  get_data(x)[output_index]
+end
+
 # Intersect intervals (and resample) for a set of time series and return a
 # concatenated time series
 function intersect_interpolate(series::AbstractArray{<:TimeSeries}; x...)
