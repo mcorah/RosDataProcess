@@ -171,19 +171,14 @@ function read_series(time_topic, data_topic::String, bag::AnnotatedBag;
                     access_time=x->x, access_data=x->x,
                     ignore_timing_mismatch=false
                    )
-  # tuple is (topic, data, time)
-  tuples = collect(read_messages(bag, [time_topic, data_topic]))
+  time = read_topic(time_topic, bag, accessor=access_time,
+                    normalize_start_time=false)
+  data = read_topic(data_topic, bag, accessor=access_data,
+                    normalize_start_time=false)
 
-  time = [access_time(x[2]) for x in tuples if x[1] == time_topic]
-  data = [access_data(x[2]) for x in tuples if x[1] == data_topic]
+  synced_data = map(t->get_at_nearest_time(t, data), get_time(time))
 
-  if ignore_timing_mismatch
-    len = min(size(time, 1), size(data, 1))
-    resize!(time, len)
-    resize!(data, len)
-  end
-
-  TimeSeries(time, data)
+  TimeSeries(get_data(time), synced_data)
 end
 
 # Read an abstract time series (see read_series, above) from multiple bags and
