@@ -8,11 +8,11 @@ configurable, and avoid clutter.
 The main features that have been implemented so far are:
 * Handling of time-series data via a `TimeSeries` type that behaves like an
   array but carries a special time-parametrization for the first dimension
-* A small set of tools for processing time series especially for resampling,
-  aligning, and processing sets of trials
+* A small set of tools for processing time series data especially for
+  resampling, aligning, and processing sets of trials
 * Tools for managing and reading collections of ROS-bags and for processing
   associated `yaml` files
-* A few tools for plotting time series
+* A few tools for plotting time series data
 
 ## Setup
 This package relies on the `rosbag` python package which does not seem to be
